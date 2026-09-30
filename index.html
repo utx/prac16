@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Practice Test 16</title>
+<style>
+  :root {
+    --ink: #1b2a41;
+    --ink-soft: #55627a;
+    --line: #d8dde6;
+    --paper: #ffffff;
+    --field: #f3f5f8;
+    --pitch: #2e7d4f;
+    --pitch-deep: #23603c;
+    --correct: #1e8e5a;
+    --wrong: #c43d3d;
+    --correct-bg: #e6f5ec;
+    --wrong-bg: #fbe9e9;
+    --amber: #b8860b;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--field); color: var(--ink);
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif; font-size: 17px; line-height: 1.5; }
+
+  header {
+    background: var(--ink); color: #fff; position: sticky; top: 0; z-index: 5;
+  }
+  .bar { max-width: 960px; margin: 0 auto; padding: 12px 24px; display: flex; align-items: center; gap: 20px; }
+  .bar .title { font-weight: 600; }
+  .bar .section-name { color: #c6d0e0; }
+  .bar .spacer { flex: 1; }
+
+  main { max-width: 960px; margin: 28px auto 80px; padding: 0 24px; }
+  .sheet { background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 32px 40px; }
+  h1 { font-size: 28px; margin: 0 0 6px; font-weight: 700; }
+  h2 { font-size: 22px; margin: 0 0 16px; font-weight: 700; }
+  p.lead { color: var(--ink-soft); margin: 0 0 20px; }
+
+  .instructions ol { padding-left: 22px; }
+  .instructions li { margin-bottom: 6px; }
+  .plan { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 22px 0 28px; }
+  .plan div { border: 1px solid var(--line); border-radius: 6px; padding: 14px 16px; }
+  .plan strong { display: block; margin-bottom: 4px; }
+  .plan span { color: var(--ink-soft); font-size: 15px; }
+
+  button.primary {
+    background: var(--pitch); color: #fff; border: 0; border-radius: 6px; font-size: 17px; font-weight: 600;
+    padding: 12px 26px; cursor: pointer; font-family: inherit;
+  }
+  button.primary:hover { background: var(--pitch-deep); }
+  button.primary:focus-visible, .option:focus-visible { outline: 3px solid var(--amber); outline-offset: 2px; }
+
+  /* passage + questions */
+  .two-col { display: grid; grid-template-columns: 5fr 6fr; gap: 40px; align-items: start; }
+  .passage { position: sticky; top: 76px; }
+  .passage-note { margin: 0 0 14px; font-style: italic; color: var(--ink-soft); }
+
+  .question { margin-bottom: 32px; padding-bottom: 28px; border-bottom: 1px solid var(--line); }
+  .question:last-of-type { border-bottom: 0; }
+  .qhead { display: flex; gap: 12px; align-items: baseline; margin-bottom: 12px; }
+  .qnum { font-weight: 700; min-width: 26px; }
+  .stem { margin: 0; }
+  .stem em.speaker { font-style: normal; font-weight: 600; }
+  .stem .facts { margin: 8px 0 0 0; padding-left: 20px; }
+  .stem .facts li { margin: 2px 0; }
+  .stem .quote { margin: 10px 0 0 0; padding: 10px 14px; background: var(--field); border-left: 3px solid var(--line); border-radius: 0 4px 4px 0; }
+  .options { display: grid; gap: 8px; margin: 14px 0 0 38px; }
+  .option {
+    display: flex; gap: 14px; align-items: flex-start; text-align: left; width: 100%;
+    background: var(--paper); border: 1px solid var(--line); border-radius: 6px; padding: 10px 14px;
+    cursor: pointer; font: inherit; color: inherit;
+  }
+  .option:hover { border-color: var(--ink-soft); }
+  .option .letter { flex: 0 0 28px; height: 28px; border-radius: 50%; border: 2px solid var(--ink);
+    display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; }
+  .option.selected { border-color: var(--ink); background: #eef2f8; }
+  .option.selected .letter { background: var(--ink); color: #fff; }
+
+  .submit-row { display: flex; align-items: center; gap: 16px; margin-top: 8px; }
+  .submit-row .status { color: var(--ink-soft); font-size: 15px; }
+
+
+  /* prose passage */
+  .prose { font-family: Georgia, "Times New Roman", serif; font-size: 17px; line-height: 1.6; }
+  .prose h3 { font-family: inherit; font-size: 22px; margin: 0 0 14px; font-weight: 700; }
+  .prose p { margin: 0 0 12px; }
+  .passage { max-height: calc(100vh - 100px); overflow-y: auto; padding-right: 8px; }
+
+
+  /* poem passage */
+  .poem { font-size: 17px; line-height: 1.6; }
+  .poem .stanza { margin: 0 0 18px; position: relative; padding-left: 32px; }
+  .poem .stanza .vn { position: absolute; left: 0; top: 1px; font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 13px; color: var(--ink-soft); }
+  .poem .stanza .line { display: block; }
+
+
+
+  /* letter-only options and shared option lists */
+  .options.letters { grid-template-columns: repeat(5, 54px); gap: 10px; }
+  .options.letters .option { justify-content: center; padding: 9px; }
+  .choice-list { border: 1px solid var(--line); border-radius: 6px; padding: 14px 18px; margin: 0 0 26px; }
+  .choice-list ol { list-style: none; margin: 0; padding: 0; }
+  .choice-list li { display: flex; gap: 12px; margin-bottom: 8px; }
+  .choice-list li:last-child { margin-bottom: 0; }
+  .choice-list .letter { flex: 0 0 26px; height: 26px; border-radius: 50%; border: 2px solid var(--ink);
+    display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; }
+
+
+  /* multi-extract passage */
+  .extract { margin: 0 0 16px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 6px; }
+  .extract h4 { font-family: "Segoe UI", Arial, sans-serif; font-size: 14px; margin: 0 0 6px; letter-spacing: .02em; }
+  .extract p { margin: 0; font-size: 16px; line-height: 1.55; }
+  .options.letters.four { grid-template-columns: repeat(4, 54px); }
+
+  /* cloze gaps */
+  .gap { color: var(--ink-soft); }
+  .gap.filled { color: var(--ink); font-weight: 600; background: #eef2f8; box-shadow: inset 0 -2px 0 var(--pitch); }
+  .gap.filled.correct { color: var(--correct); background: var(--correct-bg); box-shadow: inset 0 -2px 0 var(--correct); }
+
+  /* data tables inside stems */
+  table.grid { border-collapse: collapse; margin: 10px 0 0; font-size: 16px; }
+  table.grid th, table.grid td { border: 1px solid var(--ink); padding: 5px 14px; text-align: left; }
+  table.grid th { background: var(--field); font-weight: 600; }
+
+  /* visual (picture) options */
+  .options.visual { grid-template-columns: repeat(auto-fit, minmax(0, max-content)); gap: 14px; }
+  .options.visual .option { flex-direction: column; align-items: center; gap: 8px; padding: 10px; }
+  .options.visual .option .letter { flex: none; width: 28px; height: 28px; }
+  .options.visual .option svg { display: block; }
+  @media (max-width: 760px) { .options.visual { grid-template-columns: repeat(2, max-content); } }
+
+
+  /* v7 additions */
+  .stem .note { margin: 0 0 8px; font-style: italic; color: var(--ink-soft); font-size: 15px; }
+  .stem ol.statements { margin: 10px 0 0; padding-left: 26px; }
+  .stem ol.statements li { margin: 4px 0; padding-left: 4px; }
+  .figure { margin: 12px 0; }
+  .figure svg { display: block; max-width: 100%; height: auto; }
+  .option svg { display: block; max-width: 100%; height: auto; }
+  .option:has(svg) { align-items: center; }
+  .digit-cards { display: flex; gap: 22px; flex-wrap: wrap; margin: 12px 0 14px; }
+  .digit-card { width: 80px; height: 106px; border: 1.5px solid var(--ink); border-radius: 10px; background: #fdf3e1;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .digit-card span { font-size: 56px; font-weight: 700; line-height: 1; }
+  .digit-card small { font-size: 12px; margin-top: 6px; letter-spacing: .03em; }
+  .table-wrap { overflow-x: auto; max-width: 100%; }
+  @media (max-width: 760px) { table.grid th, table.grid td { padding: 4px 8px; font-size: 14px; } }
+  .poem .stanza .line { padding-left: 1.2em; text-indent: -1.2em; }
+  .tags { display: flex; gap: 16px; flex-wrap: wrap; margin: 12px 0 14px; }
+  .tag { border: 1.5px solid var(--ink); border-radius: 8px 22px 22px 8px; padding: 8px 22px 8px 14px; background: #fdf3e1;
+    display: flex; flex-direction: column; min-width: 96px; }
+  .tag small { font-size: 13px; color: var(--ink-soft); }
+  .tag span { font-size: 22px; font-weight: 700; }
+  .hrow { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px 22px; margin: 14px 0 16px; }
+  .hnum { display: inline-flex; gap: 3px; }
+  .hnum .dig, .hnum .hid { width: 30px; height: 40px; display: inline-flex; align-items: center; justify-content: center;
+    border: 2px solid var(--ink); border-radius: 5px; font-size: 22px; font-weight: 700; background: #fff; }
+  .hnum .hid { background: var(--ink); color: #fff; font-size: 18px; }
+  .hnum .hid.sq { color: #f2c14e; }
+  .hnum .hid.tri { color: #8fd3c7; }
+  .explain .skill { margin: 0 0 8px; font-size: 14px; font-weight: 600; color: var(--ink-soft); }
+
+  /* review */
+  .result-line { display: flex; gap: 10px; align-items: center; font-weight: 600; margin-bottom: 10px; }
+  .badge { padding: 2px 10px; border-radius: 4px; font-size: 14px; }
+  .badge.ok { background: var(--correct-bg); color: var(--correct); }
+  .badge.no { background: var(--wrong-bg); color: var(--wrong); }
+  .option.is-correct { border-color: var(--correct); background: var(--correct-bg); }
+  .option.is-correct .letter { border-color: var(--correct); background: var(--correct); color: #fff; }
+  .option.is-wrong { border-color: var(--wrong); background: var(--wrong-bg); }
+  .option.is-wrong .letter { border-color: var(--wrong); background: var(--wrong); color: #fff; }
+  .option[disabled] { cursor: default; }
+  .explain { margin: 14px 0 0 38px; padding: 14px 16px; background: var(--field); border-radius: 6px; font-size: 16px; }
+  .explain p { margin: 0 0 8px; }
+  .explain p:last-child { margin: 0; }
+  .explain .why-not { color: var(--ink-soft); }
+
+  .section-score { font-size: 18px; margin: 0 0 24px; }
+  .section-score b { font-size: 26px; }
+
+  /* final */
+  .final-score { text-align: center; padding: 20px 0 10px; }
+  .final-score .big { font-size: 64px; font-weight: 700; line-height: 1; }
+  .final-score .of { color: var(--ink-soft); font-size: 20px; }
+  .breakdown { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 26px 0 30px; }
+  .breakdown div { border: 1px solid var(--line); border-radius: 6px; padding: 14px 16px; }
+  .breakdown strong { display: block; font-size: 24px; }
+  .breakdown span { color: var(--ink-soft); font-size: 15px; }
+  .verdict { margin: 0 0 24px; }
+  .center { text-align: center; }
+
+  @media (max-width: 760px) {
+    .two-col { grid-template-columns: 1fr; }
+    .passage { position: static; }
+    .plan, .breakdown { grid-template-columns: 1fr; }
+    .sheet { padding: 22px; }
+    .options, .explain { margin-left: 0; }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .option { transition: background .12s, border-color .12s; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <span class="title">Practice Test 16</span>
+    <span class="section-name" id="hdr-section"></span>
+    <span class="spacer"></span>
+  </div>
+</header>
+<main id="app"></main>
+
+<script>
+/* ---------------------------------------------------------------
+   TEST CONTENT — Practice Test 16
+   --------------------------------------------------------------- */
+
+let passMode = "answer";
+const INK = "#1b2a41";
+
+/* ---- Reading: poem ---- */
+const POEM_LINES = [
+  ["At midnight the train comes muttering through,",
+   "past sleeping streets where the gum trees stand,",
+   "its one bright eye sweeping the dark",
+   "like a torch in a searcher’s hand."],
+  ["It carries the mail and the morning milk,",
+   "the newspapers bundled tight,",
+   "and a boy with his face to the cold glass",
+   "counting the farmhouse lights."],
+  ["He counted to ninety, then lost his place,",
+   "then started again at one;",
+   "the lights grew fewer and further apart",
+   "till the counting was nearly done."],
+  ["And somewhere ahead, where the line runs out",
+   "and the paddocks give way to the sea,",
+   "a kitchen light burns in a farmhouse window,",
+   "and a kettle is waiting for tea."]
+];
+const PASSAGE = {
+  title: "Night Train",
+  note: "Read the poem below, then answer the questions. The numbers show the verses.",
+  html: `<div class="poem">${POEM_LINES.map((v, i) =>
+    `<div class="stanza"><span class="vn">${i + 1}</span>${v.map(l => `<span class="line">${l}</span>`).join("")}</div>`).join("")}</div>`
+};
+
+/* ---- Thinking Skills Q3: cube net ---- */
+const NET_CELLS = [[0,0,"★"],[0,1,"●"],[1,1,"▲"],[1,2,"■"],[2,2,"♥"],[2,3,"✚"]];
+const NET_SVG = (() => {
+  const u = 50; let g = "";
+  NET_CELLS.forEach(([r, c, s]) => {
+    g += `<rect x="${c * u}" y="${r * u}" width="${u}" height="${u}" fill="#fff" stroke="${INK}" stroke-width="2"/>
+          <text x="${c * u + u / 2}" y="${r * u + u / 2 + 9}" font-size="26" text-anchor="middle" fill="${INK}">${s}</text>`;
+  });
+  return `<svg viewBox="-3 -3 ${4 * u + 6} ${3 * u + 6}" width="${4 * u + 6}" height="${3 * u + 6}" role="img" aria-label="A net of six squares in a staircase. Top row: star, circle. Middle row, one step right: triangle, square. Bottom row, one more step right: heart, cross.">${g}</svg>`;
+})();
+
+/* ---- Maths Q2: staircase perimeter ---- */
+const STAIR_SVG = (() => {
+  const k = 22, ox = 60, oy = 20;                 // 1 cm = k px
+  const P = [[0,0],[0,9],[4,9],[4,6],[8,6],[8,3],[12,3],[12,0]].map(([x, y]) => [ox + x * k, oy + (9 - y) * k]);
+  const pts = P.map(p => p.join(",")).join(" ");
+  const by = oy + 9 * k;
+  return `<svg viewBox="0 0 ${ox + 12 * k + 30} ${by + 44}" width="${ox + 12 * k + 30}" height="${by + 44}" role="img" aria-label="A staircase shape. The bottom edge is 12 centimetres long and the left edge is 9 centimetres tall. The top right side goes down in three equal steps.">
+    <polygon points="${pts}" fill="#e6edf7" stroke="${INK}" stroke-width="2.2"/>
+    <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="${INK}"/></marker></defs>
+    <line x1="${ox}" y1="${by + 14}" x2="${ox + 12 * k}" y2="${by + 14}" stroke="${INK}" stroke-width="1.3" marker-start="url(#ah)" marker-end="url(#ah)"/>
+    <line x1="${ox - 14}" y1="${oy}" x2="${ox - 14}" y2="${by}" stroke="${INK}" stroke-width="1.3" marker-start="url(#ah)" marker-end="url(#ah)"/>
+    <text x="${ox + 6 * k}" y="${by + 36}" font-size="17" text-anchor="middle" fill="${INK}">12 cm</text>
+    <text x="${ox - 22}" y="${oy + 4.5 * k + 6}" font-size="17" text-anchor="end" fill="${INK}">9 cm</text></svg>`;
+})();
+
+/* ---- Maths Q3: hexagon stick pattern ---- */
+const HEXROW_SVG = (() => {
+  const s = 30, w = s * Math.sqrt(3);
+  const hexPts = (cx, cy) => [0,1,2,3,4,5].map(i => { const t = (-90 + 60 * i) * Math.PI / 180; return [cx + s * Math.cos(t), cy + s * Math.sin(t)]; });
+  const row = (n, x0, y0) => {
+    const seen = new Set(); let g = "";
+    for (let h = 0; h < n; h++) {
+      const P = hexPts(x0 + w / 2 + h * w, y0);
+      for (let i = 0; i < 6; i++) {
+        const a = P[i], b = P[(i + 1) % 6];
+        const key = [a, b].map(p => p.map(v => v.toFixed(1)).join(",")).sort().join("|");
+        if (seen.has(key)) continue; seen.add(key);
+        const shrink = 0.12, ax = a[0] + (b[0] - a[0]) * shrink, ay = a[1] + (b[1] - a[1]) * shrink, bx = b[0] - (b[0] - a[0]) * shrink, by = b[1] - (b[1] - a[1]) * shrink;
+        g += `<line x1="${ax.toFixed(1)}" y1="${ay.toFixed(1)}" x2="${bx.toFixed(1)}" y2="${by.toFixed(1)}" stroke="#b8864b" stroke-width="5" stroke-linecap="round"/>`;
+        g += `<circle cx="${bx.toFixed(1)}" cy="${by.toFixed(1)}" r="3.4" fill="#c43d3d"/>`;
+      }
+    }
+    return g;
+  };
+  const y = 42;
+  let g = row(1, 10, y) + row(2, 10 + w + 34, y) + row(3, 10 + 3 * w + 68, y);
+  const lab = (x, t) => `<text x="${x}" y="${y + s + 30}" font-size="15" text-anchor="middle" fill="${INK}">${t}</text>`;
+  g += lab(10 + w / 2, "Pattern 1") + lab(10 + w + 34 + w, "Pattern 2") + lab(10 + 3 * w + 68 + 1.5 * w, "Pattern 3");
+  const W = Math.ceil(10 + 6 * w + 68 + 12);
+  return `<svg viewBox="0 0 ${W} ${y + s + 42}" width="${W}" height="${y + s + 42}" role="img" aria-label="Three patterns of hexagons made from matchsticks, joined in a row. Pattern 1 has one hexagon, pattern 2 has two, pattern 3 has three. Joined hexagons share a stick.">${g}</svg>`;
+})();
+
+const SECTIONS = [
+  {
+    id: "reading",
+    name: "Reading",
+    passage: PASSAGE,
+    intro: "Read the poem, then choose the best answer (A, B, C or D) for each question.",
+    questions: [
+      {
+        stem: "In verses 2 and 3, why does the poet describe the boy counting the farmhouse lights, losing his place and starting again?",
+        options: ["To show that the boy lives in one of the farmhouses.",
+                  "To show that the train is going faster and faster.",
+                  "To show how long the journey feels as it goes on.",
+                  "To show that the boy is not very good at counting."],
+        answer: 2,
+        skill: "understanding why a poet includes a detail",
+        explain: `<p>The boy counts to ninety, loses his place, and starts again at one, and the journey still isn’t over. That is what people do to pass the time on a long, slow trip. The lights growing “fewer and further apart” adds to this: the train has left the town far behind and is deep in the countryside. The detail shows how long the night journey feels.</p>
+                  <p class="why-not">D is the trap. It reads the detail too literally. Losing count on a long, dark trip is normal, and the poet isn’t making a point about the boy’s maths. A is wrong because the boy is going <em>past</em> the farmhouses, and his journey continues “somewhere ahead”. B has no support: nothing in the poem says the train speeds up.</p>`
+      },
+      {
+        stem: "What does the last verse suggest?",
+        options: ["The boy is scared of arriving somewhere new.",
+                  "The people in the farmhouse forgot to go to bed.",
+                  "The boy left a light on in his kitchen at home.",
+                  "Someone at the end of the line is waiting up."],
+        answer: 3,
+        skill: "making an inference",
+        explain: `<p>It is the middle of the night, yet a kitchen light is still on and “a kettle is waiting for tea”. Nobody makes tea at that hour unless they are expecting someone. The verse is set “somewhere ahead”, at the end of the line, so someone there has stayed up to welcome a traveller, most likely the boy.</p>
+                  <p class="why-not">B is the trap. A light on at midnight might mean someone forgot to go to bed, but the kettle “waiting for tea” shows the light has been left on on purpose, for a visitor. C mixes up where the boy is going with where he came from. A gives the boy a feeling the poem never mentions. The mood of the last verse is warm and welcoming, not frightening.</p>`
+      },
+      {
+        stem: "In verse 1, the train’s headlight is compared to “a torch in a searcher’s hand”. What does this comparison suggest about the headlight?",
+        options: ["It is small and weak, like a torch someone might carry.",
+                  "It swings from side to side as if hunting for something.",
+                  "It belongs to a person who is lost somewhere in the dark.",
+                  "It only shines when somebody remembers to switch it on."],
+        answer: 1,
+        skill: "interpreting a simile",
+        explain: `<p>Someone searching with a torch swings the beam from side to side, looking into the dark. The line before says the light is “sweeping the dark”, so the simile makes the headlight seem to be moving across the night as if it were hunting for something.</p>
+                  <p class="why-not">A is the trap. A torch <em>is</em> small, but the poet isn’t comparing size or brightness; the point is the searching, sweeping movement. C takes the comparison literally: nobody in the poem is lost. D is about how torches work, which has nothing to do with the poem.</p>`
+      }
+    ]
+  },
+  {
+    id: "thinking",
+    name: "Thinking Skills",
+    intro: "Choose the one correct answer (A, B, C or D).",
+    questions: [
+      {
+        stem: `<p class="quote" style="margin-top:0"><em class="speaker">Kai:</em> “The new play equipment must be more dangerous than the old equipment. Since it was put in, more children have gone to sick bay with scrapes.”</p>
+               <p style="margin:10px 0 0">Which one of these statements, if true, most weakens Kai’s argument?</p>`,
+        options: ["Twice as many children as before now use it each day.",
+                  "The new equipment is taller than the old equipment was.",
+                  "Scrapes are the most common reason for going to sick bay.",
+                  "The school spent a lot of money on the new equipment."],
+        answer: 0,
+        skill: "weakening an argument",
+        explain: `<p>Kai assumes the extra scrapes happen because the equipment is more dangerous. But if twice as many children use it, you would expect more scrapes even if it were just as safe as before. A gives another reason for the rise in scrapes, and that weakens Kai’s conclusion.</p>
+                  <p class="why-not">B is the trap. It sounds important, but a taller structure would make Kai’s argument <em>stronger</em>, not weaker. C is about sick bay in general, not whether the equipment has become more dangerous. D is irrelevant, because cost doesn’t tell us anything about safety.</p>`
+      },
+      {
+        stem: `There are 28 students in a class.
+               <ul class="facts">
+                 <li>17 students have a dog.</li>
+                 <li>12 students have a cat.</li>
+                 <li>5 students have neither a dog nor a cat.</li>
+               </ul>
+               <p style="margin:10px 0 0">How many students have both a dog and a cat?</p>`,
+        options: ["1", "5", "6", "11"],
+        answer: 2,
+        skill: "working with overlapping groups",
+        explain: `<p>5 students have neither pet, so 28 − 5 = 23 students have at least one. If you add the dog owners and cat owners, 17 + 12 = 29. That is 6 more than 23, because the students who have both were counted twice, once as dog owners and once as cat owners. So 6 students have both.</p>
+                  <p class="why-not">1 (A) is the trap. It works out 29 − 28 but forgets that 5 students have no pet, so the 29 should be compared with 23, not 28. 5 (B) repeats a number from the question. 11 (D) is 28 − 17, which is the number of students with no dog, not the number with both.</p>`
+      },
+      {
+        stem: `This net is folded to make a cube.
+               <div class="figure">${NET_SVG}</div>
+               <p style="margin:0">Which symbol will be on the face opposite ★?</p>`,
+        options: ["●", "■", "▲", "♥"].map(x => `<span style="font-size:1.6em;line-height:1">${x}</span>`),
+        answer: 1,
+        skill: "folding a net in your head",
+        explain: `<p>Put ▲ on the table as the base. ● is joined to the top edge of ▲, so it folds up to become the back wall. ■ is joined to the right edge of ▲, so it becomes the right wall. ★ is joined to the left side of ●, so it swings round to become the left wall. The left and right walls are opposite each other, so ★ is opposite ■.</p>
+                  <p>(The other pairs: ● is opposite ♥, and ▲ is opposite ✚.)</p>
+                  <p class="why-not">▲ (C) is the trap. In a straight strip of three squares, the first and third are opposite, but ★, ● and ▲ aren’t in a straight line, because the net turns a corner at ●. ● (A) touches ★ in the net, so it must be next to it on the cube. ♥ (D) ends up opposite ●.</p>`
+      }
+    ]
+  },
+  {
+    id: "maths",
+    name: "Mathematical Reasoning",
+    intro: "Choose the one correct answer (A, B, C, D or E). No calculators.",
+    questions: [
+      {
+        stem: `Three teams scored 900 points altogether. Team C scored twice as many points as Team A and Team B combined.
+               <p style="margin:10px 0 0">How many points did Team C score?</p>`,
+        options: ["225", "300", "450", "600", "1,800"],
+        answer: 3,
+        skill: "sharing in a ratio (part–whole)",
+        explain: `<p>Think of Team A and Team B together as one part. Team C scored twice that, so Team C is 2 parts. Altogether there are 1 + 2 = 3 equal parts, making 900 points. One part is 900 ÷ 3 = 300, so Team C scored 2 × 300 = <b>600</b>.</p>
+                  <p>Check: A and B together have 300, C has 600, and 300 + 600 = 900. ✓</p>
+                  <p class="why-not">300 (B) is the trap: that is how many points A and B scored <em>together</em>, not Team C. 450 (C) splits 900 into two halves, ignoring the “twice”. 225 (A) splits 900 into 4 parts (one each for A and B, and two for C) and gives one part. But A and B together make just one part, not two. 1,800 (E) doubles the whole total, but C’s score has to be part of the 900.</p>`
+      },
+      {
+        stem: `All the corners of this shape are right angles.
+               <div class="figure">${STAIR_SVG}</div>
+               <p style="margin:10px 0 0">What is the perimeter of the shape?</p>`,
+        options: ["21 cm", "30 cm", "42 cm", "108 cm", "Cannot be worked out"],
+        answer: 2,
+        skill: "perimeter of a shape with missing lengths",
+        explain: `<p>You don’t need the size of each step. The flat parts of the steps (the treads) together stretch across the whole width of the shape, the same as the bottom edge, which is 12 cm. The upright parts, together with the short right-hand edge, drop through the whole height, the same as the left edge, which is 9 cm.</p>
+                  <p>So the perimeter is the same as a 12 cm by 9 cm rectangle: 12 + 9 + 12 + 9 = <b>42 cm</b>.</p>
+                  <p class="why-not">“Cannot be worked out” (E) is the trap. The step sizes are missing, but you don’t need them. 21 cm (A) only adds the two labelled sides. 30 cm (B) counts the heights but forgets the treads (12 + 9 + 9). 108 cm (D) is 12 × 9, which would be the area of the rectangle, not a perimeter.</p>`
+      },
+      {
+        stem: `Sticks are used to make a row of hexagons. Pattern 1 uses 6 sticks. Where two hexagons touch, they share one stick.
+               <div class="figure">${HEXROW_SVG}</div>
+               <p style="margin:10px 0 0">How many sticks are needed for Pattern 12?</p>`,
+        options: ["56", "60", "61", "66", "72"],
+        answer: 2,
+        skill: "finding the rule for a growing pattern",
+        explain: `<p>Count them: Pattern 1 uses 6 sticks, Pattern 2 uses 11, and Pattern 3 uses 16. Each new hexagon shares one stick with the hexagon before it, so it only needs 5 more sticks.</p>
+                  <p>Pattern 12 has 11 more hexagons than Pattern 1, so it needs 6 + 11 × 5 = 6 + 55 = <b>61</b> sticks.</p>
+                  <p class="why-not">72 (E) is the trap: 12 × 6 forgets that joined hexagons share a stick. 60 (B) is 12 × 5, which forgets the first hexagon needs 6. 66 (D) treats Pattern 12 as six copies of Pattern 2 (6 × 11), forgetting that the copies share a stick where they join. 56 (A) adds one lot of 5 too few.</p>`
+      }
+    ]
+  }
+];
+
+const LETTERS = ["A", "B", "C", "D", "E"];
+const app = document.getElementById("app");
+const hdrSection = document.getElementById("hdr-section");
+let responses = SECTIONS.map(s => s.questions.map(() => null));
+let current = 0;
+
+function showStart() {
+  hdrSection.textContent = "";
+  app.innerHTML = `
+    <div class="sheet instructions">
+      <h1>Practice paper 16</h1>
+      <p class="lead">Three short sections: reading, thinking skills and maths.</p>
+      <div class="plan">
+        ${SECTIONS.map(s => `<div><strong>${s.name}</strong><span>${s.questions.length} questions</span></div>`).join("")}
+      </div>
+      <ol>
+        <li>Take as long as you need — there is no time limit.</li>
+        <li>Answer all three questions in a section, then press <strong>Submit answers</strong> to see how you went.</li>
+        <li>You don’t lose marks for wrong answers, so attempt every question.</li>
+        <li>Your overall mark out of 9 is shown at the end.</li>
+      </ol>
+      <button class="primary" id="start">Start the reading section</button>
+    </div>`;
+  document.getElementById("start").onclick = () => { current = 0; responses = SECTIONS.map(s => s.questions.map(() => null)); showSection(); };
+}
+
+function renderPassage(pass) {
+  return `<div class="passage">
+    <p class="passage-note">${pass.note}</p>
+    <div class="prose"><h3>${pass.title}</h3><div id="passage-body">${typeof pass.html === "function" ? pass.html() : pass.html}</div></div>
+  </div>`;
+}
+
+function refreshPassage() {
+  const pass = SECTIONS[current].passage;
+  const el = document.getElementById("passage-body");
+  if (el && pass && typeof pass.html === "function") el.innerHTML = pass.html();
+}
+
+function renderQuestions(section, mode) {
+  return section.questions.map((q, qi) => {
+    const chosen = responses[current][qi];
+    const opts = q.options.map((o, oi) => {
+      let cls = "option";
+      if (mode === "answer" && chosen === oi) cls += " selected";
+      if (mode === "review") {
+        if (oi === q.answer) cls += " is-correct";
+        else if (chosen === oi) cls += " is-wrong";
+      }
+      return `<button type="button" class="${cls}" data-q="${qi}" data-o="${oi}" ${mode === "review" ? "disabled" : ""}>
+                <span class="letter">${LETTERS[oi]}</span>${q.letterOptions ? "" : `<span>${o}</span>`}</button>`;
+    }).join("");
+    const optCls = q.visualOptions ? "options visual" : (q.letterOptions ? "options letters" : "options");
+    let result = "";
+    if (mode === "review") {
+      const right = chosen === q.answer;
+      const label = chosen === null ? "Not answered" : (right ? "Correct" : "Incorrect");
+      result = `<div class="result-line"><span class="badge ${right ? "ok" : "no"}">${label}</span>
+                <span>Correct answer: ${LETTERS[q.answer]}${chosen !== null && !right ? ` · You chose ${LETTERS[chosen]}` : ""}</span></div>`;
+    }
+    return `<div class="question">
+      <div class="qhead"><span class="qnum">${qi + 1}</span><div class="stem">${q.stem}</div></div>
+      ${result}
+      <div class="${optCls}">${opts}</div>
+      ${mode === "review" ? `<div class="explain">${q.skill ? `<p class="skill">Skill tested: ${q.skill}</p>` : ""}${q.explain}</div>` : ""}
+    </div>`;
+  }).join("");
+}
+
+function showSection() {
+  passMode = "answer";
+  const s = SECTIONS[current];
+  hdrSection.textContent = `${s.name} · Section ${current + 1} of ${SECTIONS.length}`;
+  const qs = `<div>
+      <h2>${s.name}</h2>
+      <p class="lead">${s.intro}</p>
+      ${s.preamble || ""}
+      ${renderQuestions(s, "answer")}
+      <div class="submit-row">
+        <button class="primary" id="submit">Submit answers</button>
+        <span class="status" id="status"></span>
+      </div>
+    </div>`;
+  app.innerHTML = `<div class="sheet">${s.passage ? `<div class="two-col">${renderPassage(s.passage)}${qs}</div>` : qs}</div>`;
+
+  app.querySelectorAll(".option").forEach(btn => {
+    btn.onclick = () => {
+      const qi = +btn.dataset.q, oi = +btn.dataset.o;
+      responses[current][qi] = oi;
+      app.querySelectorAll(`.option[data-q="${qi}"]`).forEach(b => b.classList.toggle("selected", +b.dataset.o === oi));
+      refreshPassage();
+      updateStatus();
+    };
+  });
+  document.getElementById("submit").onclick = () => {
+    const unanswered = responses[current].filter(r => r === null).length;
+    if (unanswered && !confirm(`You have ${unanswered} unanswered question${unanswered > 1 ? "s" : ""}. Submit anyway?`)) return;
+    showReview();
+  };
+  updateStatus();
+  window.scrollTo(0, 0);
+}
+
+function updateStatus() {
+  const done = responses[current].filter(r => r !== null).length;
+  const el = document.getElementById("status");
+  if (el) el.textContent = `${done} of ${SECTIONS[current].questions.length} answered`;
+}
+
+function sectionScore(i) {
+  return SECTIONS[i].questions.reduce((n, q, qi) => n + (responses[i][qi] === q.answer ? 1 : 0), 0);
+}
+
+function showReview() {
+  passMode = "review";
+  const s = SECTIONS[current];
+  const score = sectionScore(current);
+  const last = current === SECTIONS.length - 1;
+  hdrSection.textContent = `${s.name} · Review`;
+  const body = `<div>
+      <h2>${s.name} — review</h2>
+      <p class="section-score">You scored <b>${score}</b> out of ${s.questions.length}</p>
+      ${s.preamble || ""}
+      ${renderQuestions(s, "review")}
+      <div class="submit-row">
+        <button class="primary" id="next">${last ? "See your overall mark" : `Start the ${SECTIONS[current + 1].name.split(" — ")[0].toLowerCase()} section`}</button>
+      </div>
+    </div>`;
+  app.innerHTML = `<div class="sheet">${s.passage ? `<div class="two-col">${renderPassage(s.passage)}${body}</div>` : body}</div>`;
+  document.getElementById("next").onclick = () => { if (last) showFinal(); else { current++; showSection(); } };
+  window.scrollTo(0, 0);
+}
+
+function showFinal() {
+  hdrSection.textContent = "Results";
+  const total = SECTIONS.reduce((n, _, i) => n + sectionScore(i), 0);
+  const max = SECTIONS.reduce((n, s) => n + s.questions.length, 0);
+  let verdict;
+  if (total === max) verdict = "Full marks. Every question right, across all three sections.";
+  else if (total >= 7) verdict = "A strong result. Look back at the questions you missed — the explanations show exactly where the trap was.";
+  else if (total >= 5) verdict = "A solid attempt. The sections where you dropped marks are the ones to practise next.";
+  else verdict = "A good start. Re-read the explanations for each section, then try the paper again.";
+  app.innerHTML = `
+    <div class="sheet">
+      <div class="final-score"><div class="big">${total}</div><div class="of">out of ${max}</div></div>
+      <div class="breakdown">
+        ${SECTIONS.map((s, i) => `<div><strong>${sectionScore(i)} / ${s.questions.length}</strong><span>${s.name}</span></div>`).join("")}
+      </div>
+      <p class="verdict center">${verdict}</p>
+      <div class="center"><button class="primary" id="again">Try the paper again</button></div>
+    </div>`;
+  document.getElementById("again").onclick = showStart;
+  window.scrollTo(0, 0);
+}
+
+
+showStart();
+</script>
+</body>
+</html>
